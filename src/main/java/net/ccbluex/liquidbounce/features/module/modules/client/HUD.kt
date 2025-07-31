@@ -72,14 +72,14 @@ object HUD : Module("HUD", category = ModuleCategory.CLIENT, array = false, defa
         var width = 3
         val colors = getClientColors()
         mc.fontRendererObj.drawStringWithShadow(
-            "Night",
+            "NightLightX",
             3.0f,
             3.0f,
             colors?.get(0)?.rgb ?: rainbow().rgb
         )
         width += mc.fontRendererObj.getStringWidth("FDP")
         mc.fontRendererObj.drawStringWithShadow(
-            "LightX",
+            "",
             width.toFloat(),
             3.0f,
             colors?.get(1)?.rgb ?: rainbow().rgb
