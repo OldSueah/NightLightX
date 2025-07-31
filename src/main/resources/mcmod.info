@@ -1,7 +1,7 @@
 [
   {
-    "modid": "fdpclient",
-    "name": "FDPClient",
+    "modid": "nightlightx",
+    "name": "NightLightX",
     "description": "Minecraft 1.8 Utility mod",
     "version": "${version}",
     "mcversion": "${mcversion}",
