@@ -14,9 +14,9 @@ import net.minecraft.util.AxisAlignedBB
 import net.ccbluex.liquidbounce.FDPClient
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 
-class ReachAurav2 : Module(name = "ReachAurav2", category = ModuleCategory.COMBAT) {
+class ReachDelay : Module(name = "ReachDelay", category = ModuleCategory.COMBAT) {
 
-    private val reachValue = FloatValue("Reach", 3.0f, 3.0f, 6.0f)
+    private val reachValue = FloatValue("Reach", 3.0f, 3.0f, 8.0f)
     private val delayValue = IntegerValue("Delay", 70, 0, 1000)
     private val timer = MSTimer()
     var currentTarget: EntityLivingBase? = null
