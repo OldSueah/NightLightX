@@ -5,6 +5,7 @@
  */
 package net.ccbluex.liquidbounce.ui.client.gui.clickgui.style.styles;
 
+import net.ccbluex.liquidbounce.FDPClient;
 import net.ccbluex.liquidbounce.ui.client.gui.ClickGUIModule;
 import net.ccbluex.liquidbounce.ui.client.gui.clickgui.Panel;
 import net.ccbluex.liquidbounce.ui.client.gui.clickgui.elements.ButtonElement;
@@ -14,7 +15,6 @@ import net.ccbluex.liquidbounce.ui.font.Fonts;
 import net.ccbluex.liquidbounce.ui.font.GameFontRenderer;
 import net.ccbluex.liquidbounce.ui.i18n.LanguageManager;
 import net.ccbluex.liquidbounce.utils.block.BlockUtils;
-import net.ccbluex.liquidbounce.utils.render.ColorUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
 import net.ccbluex.liquidbounce.features.value.*;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -29,46 +29,48 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class NullStyle extends Style {
+public class LiquidBounceStyle extends Style {
 
     private boolean mouseDown;
     private boolean rightMouseDown;
 
     @Override
     public void drawPanel(int mouseX, int mouseY, Panel panel) {
-        RenderUtils.drawGradientSidewaysH((float) panel.getX() - 3, (float) panel.getY(), (float) panel.getX() + panel.getWidth() + 3, (float) panel.getY() + 19, ClickGUIModule.INSTANCE.generateColor().getRGB(), ColorUtils.INSTANCE.reAlpha(ClickGUIModule.INSTANCE.generateColor(),50).getRGB());
-        if(panel.getFade() > 0)
-            RenderUtils.drawBorderedRect((float) panel.getX(), (float) panel.getY() + 19, (float) panel.getX() + panel.getWidth(), panel.getY() + 19 + panel.getFade(), 1, Integer.MIN_VALUE, Integer.MIN_VALUE);
-        GlStateManager.resetColor();
-        float textWidth = Fonts.minecraftFont.getStringWidth("§f" + StringUtils.stripControlCodes(LanguageManager.INSTANCE.get(panel.getName().replaceAll("%",""))));
-        Fonts.minecraftFont.drawString("§f" + LanguageManager.INSTANCE.get(panel.getName().replaceAll("%","")), (int) (panel.getX() - (textWidth - 93.0F) / 2F), panel.getY() + 7, Integer.MAX_VALUE);
+        RenderUtils.drawBorderedRect((float) panel.getX() - (panel.getScrollbar() ? 4 : 0), (float) panel.getY(), (float) panel.getX() + panel.getWidth(), (float) panel.getY() + 19 + panel.getFade(), 1F, new Color(255, 255, 255, 90).getRGB(), Integer.MIN_VALUE);
+        float textWidth = Fonts.font35.getStringWidth("§f" + StringUtils.stripControlCodes(LanguageManager.INSTANCE.get(panel.getName().replaceAll("%",""))));
+        Fonts.font35.drawString("§f" + LanguageManager.INSTANCE.get(panel.getName().replaceAll("%","")), (int) (panel.getX() - (textWidth - 100.0F) / 2F), panel.getY() + 7, -16777216);
+
+        if(panel.getScrollbar() && panel.getFade() > 0) {
+            RenderUtils.drawRect(panel.getX() - 2, panel.getY() + 21, panel.getX(), panel.getY() + 16 + panel.getFade(), Integer.MAX_VALUE);
+            RenderUtils.drawRect(panel.getX() - 2, panel.getY() + 30 + (panel.getFade() - 24F) / (panel.getElements().size() - FDPClient.moduleManager.getModule(ClickGUIModule.class).getMaxElementsValue().get()) * panel.getDragged() - 10.0f, panel.getX(), panel.getY() + 40 + (panel.getFade() - 24.0f) / (panel.getElements().size() - FDPClient.moduleManager.getModule(ClickGUIModule.class).getMaxElementsValue().get()) * panel.getDragged(), Integer.MIN_VALUE);
+        }
     }
 
     @Override
     public void drawDescription(int mouseX, int mouseY, String text) {
-        int textWidth = Fonts.minecraftFont.getStringWidth(LanguageManager.INSTANCE.get(text.replaceAll("%","")));
+        int textWidth = Fonts.font35.getStringWidth(LanguageManager.INSTANCE.get(text.replaceAll("%","")));
 
-        RenderUtils.drawRect(mouseX + 9, mouseY, mouseX + textWidth + 14, mouseY + Fonts.minecraftFont.FONT_HEIGHT + 3, ClickGUIModule.INSTANCE.generateColor().getRGB());
+        RenderUtils.drawBorderedRect(mouseX + 9, mouseY, mouseX + textWidth + 14, mouseY + Fonts.font35.FONT_HEIGHT + 3, 1, new Color(255, 255, 255, 90).getRGB(), Integer.MIN_VALUE);
         GlStateManager.resetColor();
-        Fonts.minecraftFont.drawString(LanguageManager.INSTANCE.get(text.replaceAll("%","")), mouseX + 12, mouseY + (Fonts.minecraftFont.FONT_HEIGHT / 2), Integer.MAX_VALUE);
+        Fonts.font35.drawString(LanguageManager.INSTANCE.get(text.replaceAll("%","")), mouseX + 12, mouseY + (Fonts.font35.FONT_HEIGHT) / 2, Integer.MAX_VALUE);
     }
 
     @Override
     public void drawButtonElement(int mouseX, int mouseY, ButtonElement buttonElement) {
         GlStateManager.resetColor();
-        Fonts.minecraftFont.drawString(LanguageManager.INSTANCE.get(buttonElement.getDisplayName().replaceAll("%","")), (int) (buttonElement.getX() - (Fonts.minecraftFont.getStringWidth(LanguageManager.INSTANCE.get(buttonElement.getDisplayName().replaceAll("%",""))) - 100.0f) / 2.0f), buttonElement.getY() + 6, buttonElement.getColor());
+        Fonts.font35.drawString(LanguageManager.INSTANCE.get(buttonElement.getDisplayName().replaceAll("%","")), (int) (buttonElement.getX() - (Fonts.font35.getStringWidth(LanguageManager.INSTANCE.get(buttonElement.getDisplayName().replaceAll("%",""))) - 100.0f) / 2.0f), buttonElement.getY() + 6, buttonElement.getColor());
     }
 
     @Override
     public void drawModuleElement(int mouseX, int mouseY, ModuleElement moduleElement) {
-        final int guiColor = ClickGUIModule.INSTANCE.generateColor().getRGB();
+        int guiColor = ClickGUIModule.INSTANCE.generateColor().getRGB();
         GlStateManager.resetColor();
-        Fonts.minecraftFont.drawString(LanguageManager.INSTANCE.get(moduleElement.getDisplayName().replaceAll("%","")), (int) (moduleElement.getX()+3), moduleElement.getY() + 7, moduleElement.getModule().getState() ? guiColor : Integer.MAX_VALUE);
+        Fonts.font35.drawString(LanguageManager.INSTANCE.get(moduleElement.getDisplayName().replaceAll("%","")), (int) (moduleElement.getX() - (Fonts.font35.getStringWidth(LanguageManager.INSTANCE.get(moduleElement.getDisplayName().replaceAll("%",""))) - 100.0f) / 2.0f), moduleElement.getY() + 6, moduleElement.getModule().getState() ? guiColor : Integer.MAX_VALUE);
 
         final List<Value<?>> moduleValues = moduleElement.getModule().getValues();
 
         if(!moduleValues.isEmpty()) {
-            Fonts.minecraftFont.drawString("+", moduleElement.getX() + moduleElement.getWidth() - 8, moduleElement.getY() + (moduleElement.getHeight() / 2), Color.WHITE.getRGB());
+            Fonts.font35.drawString("+", moduleElement.getX() + moduleElement.getWidth() - 8, moduleElement.getY() + (moduleElement.getHeight() / 2), Color.WHITE.getRGB());
 
             if(moduleElement.isShowSettings()) {
                 int yPos = moduleElement.getY() + 4;
@@ -76,17 +78,17 @@ public class NullStyle extends Style {
                     if(!value.getDisplayable())
                         continue;
 
-                    if(value instanceof BoolValue) {
-                        String text = value.getName();
-                        float textWidth = Fonts.minecraftFont.getStringWidth(text);
+                    if (value instanceof BoolValue) {
+                        final String text = value.getName();
+                        final float textWidth = Fonts.font35.getStringWidth(text);
 
-                        if(moduleElement.getSettingsWidth() < textWidth + 8)
+                        if (moduleElement.getSettingsWidth() < textWidth + 8)
                             moduleElement.setSettingsWidth(textWidth + 8);
 
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 14, Integer.MIN_VALUE);
 
-                        if(mouseX >= moduleElement.getX() + moduleElement.getWidth() + 4 && mouseX <= moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() && mouseY >= yPos + 2 && mouseY <= yPos + 14) {
-                            if(Mouse.isButtonDown(0) && moduleElement.isntPressed()) {
+                        if (mouseX >= moduleElement.getX() + moduleElement.getWidth() + 4 && mouseX <= moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() && mouseY >= yPos + 2 && mouseY <= yPos + 14) {
+                            if (Mouse.isButtonDown(0) && moduleElement.isntPressed()) {
                                 final BoolValue boolValue = (BoolValue) value;
 
                                 boolValue.set(!boolValue.get());
@@ -95,21 +97,21 @@ public class NullStyle extends Style {
                         }
 
                         GlStateManager.resetColor();
-                        Fonts.minecraftFont.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, ((BoolValue) value).get() ? guiColor : Integer.MAX_VALUE);
+                        Fonts.font35.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, ((BoolValue) value).get() ? guiColor : Integer.MAX_VALUE);
                         yPos += 12;
                     }else if(value instanceof ListValue) {
                         ListValue listValue = (ListValue) value;
 
-                        String text = value.getName();
-                        float textWidth = Fonts.minecraftFont.getStringWidth(text);
+                        final String text = value.getName();
+                        final float textWidth = Fonts.font35.getStringWidth(text);
 
                         if(moduleElement.getSettingsWidth() < textWidth + 16)
                             moduleElement.setSettingsWidth(textWidth + 16);
 
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 14, Integer.MIN_VALUE);
                         GlStateManager.resetColor();
-                        Fonts.minecraftFont.drawString("§c" + text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
-                        Fonts.minecraftFont.drawString(listValue.openList ? "-" : "+", (int) (moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() - (listValue.openList ? 5 : 6)), yPos + 4, 0xffffff);
+                        Fonts.font35.drawString("§c" + text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
+                        Fonts.font35.drawString(listValue.openList ? "-" : "+", (int) (moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() - (listValue.openList ? 5 : 6)), yPos + 4, 0xffffff);
 
                         if(mouseX >= moduleElement.getX() + moduleElement.getWidth() + 4 && mouseX <= moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() && mouseY >= yPos + 2 && mouseY <= yPos + 14) {
                             if(Mouse.isButtonDown(0) && moduleElement.isntPressed()) {
@@ -121,10 +123,10 @@ public class NullStyle extends Style {
                         yPos += 12;
 
                         for(final String valueOfList : listValue.getValues()) {
-                            final float textWidth2 = Fonts.minecraftFont.getStringWidth(">" + valueOfList);
+                            final float textWidth2 = Fonts.font35.getStringWidth(">" + valueOfList);
 
-                            if(moduleElement.getSettingsWidth() < textWidth2 + 12)
-                                moduleElement.setSettingsWidth(textWidth2 + 12);
+                            if(moduleElement.getSettingsWidth() < textWidth2 + 8)
+                                moduleElement.setSettingsWidth(textWidth2 + 8);
 
                             if (listValue.openList) {
                                 RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 14, Integer.MIN_VALUE);
@@ -137,22 +139,22 @@ public class NullStyle extends Style {
                                 }
 
                                 GlStateManager.resetColor();
-                                Fonts.minecraftFont.drawString(">", moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, Integer.MAX_VALUE);
-                                Fonts.minecraftFont.drawString(valueOfList, moduleElement.getX() + moduleElement.getWidth() + 14, yPos + 4, listValue.get() != null && listValue.get().equalsIgnoreCase(valueOfList) ? guiColor : Integer.MAX_VALUE);
+                                Fonts.font35.drawString(">", moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, Integer.MAX_VALUE);
+                                Fonts.font35.drawString(valueOfList, moduleElement.getX() + moduleElement.getWidth() + 14, yPos + 4, listValue.get() != null && listValue.get().equalsIgnoreCase(valueOfList) ? guiColor : Integer.MAX_VALUE);
                                 yPos += 12;
                             }
                         }
                     }else if(value instanceof FloatValue) {
-                        FloatValue floatValue = (FloatValue) value;
-                        String text = value.getName() + "§f: §c" + round(floatValue.get());
-                        float textWidth = Fonts.minecraftFont.getStringWidth(text);
+                        final FloatValue floatValue = (FloatValue) value;
+                        final String text = value.getName() + "§f: §c" + round(floatValue.get());
+                        final float textWidth = Fonts.font35.getStringWidth(text);
 
                         if(moduleElement.getSettingsWidth() < textWidth + 8)
                             moduleElement.setSettingsWidth(textWidth + 8);
 
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 24, Integer.MIN_VALUE);
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 8, yPos + 18, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() - 4, yPos + 19, Integer.MAX_VALUE);
-                        float sliderValue = moduleElement.getX() + moduleElement.getWidth() + ((moduleElement.getSettingsWidth() - 12) * (floatValue.get() - floatValue.getMinimum()) / (floatValue.getMaximum() - floatValue.getMinimum()));
+                        final float sliderValue = moduleElement.getX() + moduleElement.getWidth() + ((moduleElement.getSettingsWidth() - 12) * (floatValue.get() - floatValue.getMinimum()) / (floatValue.getMaximum() - floatValue.getMinimum()));
                         RenderUtils.drawRect(8 + sliderValue, yPos + 15, sliderValue + 11, yPos + 21, guiColor);
 
                         if(mouseX >= moduleElement.getX() + moduleElement.getWidth() + 4 && mouseX <= moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() - 4 && mouseY >= yPos + 15 && mouseY <= yPos + 21) {
@@ -163,19 +165,19 @@ public class NullStyle extends Style {
                         }
 
                         GlStateManager.resetColor();
-                        Fonts.minecraftFont.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
+                        Fonts.font35.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
                         yPos += 22;
                     }else if(value instanceof IntegerValue) {
-                        IntegerValue integerValue = (IntegerValue) value;
-                        String text = value.getName() + "§f: §c" + (value instanceof BlockValue ? BlockUtils.getBlockName(integerValue.get()) + " (" + integerValue.get() + ")" : integerValue.get());
-                        float textWidth = Fonts.minecraftFont.getStringWidth(text);
+                        final IntegerValue integerValue = (IntegerValue) value;
+                        final String text = value.getName() + "§f: §c" + (value instanceof BlockValue ? BlockUtils.getBlockName(integerValue.get()) + " (" + integerValue.get() + ")" : integerValue.get());
+                        final float textWidth = Fonts.font35.getStringWidth(text);
 
                         if(moduleElement.getSettingsWidth() < textWidth + 8)
                             moduleElement.setSettingsWidth(textWidth + 8);
 
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 24, Integer.MIN_VALUE);
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 8, yPos + 18, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() - 4, yPos + 19, Integer.MAX_VALUE);
-                        float sliderValue = moduleElement.getX() + moduleElement.getWidth() + ((moduleElement.getSettingsWidth() - 12) * (integerValue.get() - integerValue.getMinimum()) / (integerValue.getMaximum() - integerValue.getMinimum()));
+                        final float sliderValue = moduleElement.getX() + moduleElement.getWidth() + ((moduleElement.getSettingsWidth() - 12) * (integerValue.get() - integerValue.getMinimum()) / (integerValue.getMaximum() - integerValue.getMinimum()));
                         RenderUtils.drawRect(8 + sliderValue, yPos + 15, sliderValue + 11, yPos + 21, guiColor);
 
                         if(mouseX >= moduleElement.getX() + moduleElement.getWidth() + 4 && mouseX <= moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth() && mouseY >= yPos + 15 && mouseY <= yPos + 21) {
@@ -186,7 +188,7 @@ public class NullStyle extends Style {
                         }
 
                         GlStateManager.resetColor();
-                        Fonts.minecraftFont.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
+                        Fonts.font35.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
                         yPos += 22;
                     }else if(value instanceof FontValue) {
                         final FontValue fontValue = (FontValue) value;
@@ -210,8 +212,8 @@ public class NullStyle extends Style {
                             }
                         }
 
-                        Fonts.minecraftFont.drawString(displayString, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, Color.WHITE.getRGB());
-                        int stringWidth = Fonts.minecraftFont.getStringWidth(displayString);
+                        Fonts.font35.drawString(displayString, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, Color.WHITE.getRGB());
+                        int stringWidth = Fonts.font35.getStringWidth(displayString);
 
                         if(moduleElement.getSettingsWidth() < stringWidth + 8)
                             moduleElement.setSettingsWidth(stringWidth + 8);
@@ -256,14 +258,14 @@ public class NullStyle extends Style {
                         yPos += 11;
                     }else{
                         String text = value.getName() + "§f: §c" + value.get();
-                        float textWidth = Fonts.minecraftFont.getStringWidth(text);
+                        float textWidth = Fonts.font35.getStringWidth(text);
 
-                        if(moduleElement.getSettingsWidth() < textWidth + 8)
+                        if (moduleElement.getSettingsWidth() < textWidth + 8)
                             moduleElement.setSettingsWidth(textWidth + 8);
 
                         RenderUtils.drawRect(moduleElement.getX() + moduleElement.getWidth() + 4, yPos + 2, moduleElement.getX() + moduleElement.getWidth() + moduleElement.getSettingsWidth(), yPos + 14, Integer.MIN_VALUE);
                         GlStateManager.resetColor();
-                        Fonts.minecraftFont.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
+                        Fonts.font35.drawString(text, moduleElement.getX() + moduleElement.getWidth() + 6, yPos + 4, 0xffffff);
                         yPos += 12;
                     }
                 }
@@ -284,4 +286,3 @@ public class NullStyle extends Style {
         return bd;
     }
 }
-
